@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+          crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN (example) -->
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <!-- Custom CSS for additional styling -->
+    <style>
+
+        body{
+            background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+        }
+
+        .thumbnail-img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .main-img {
+            width: 100%;
+            max-width: 400px;
+        }
+        .offer-text {
+            color: #e47911;
+            font-weight: bold;
+        }
+        .price-strike {
+            text-decoration: line-through;
+            color: #888;
+        }
+        .save-text {
+            color: #008000;
+        }
+        .pre-book-btn {
+            background-color: #ff9f00;
+            border: none;
+            color: white;
+            font-weight: bold;
+        }
+        .emi-text {
+            color: #e47911;
+        }
+        .btn-buy, .btn-add-to-cart {
+            padding: 10px 20px;
+        }
+        .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+    </style>
+</head>
+<body>
+<!-- NavBar Starts-->
+<header class="sticky-header">
+    <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+</header>
+<!-- NavBar Ends-->
+
+    <div class="container my-4">
+
+
+        <div th:if="${successMsg}">
+            <div class="alert alert-success mt-2 text-center" role="alert">
+                <span th:text="${successMsg}"></span>
+            </div>
+        </div>
+
+        <div th:if="${errorMsg}">
+            <div class="alert alert-danger mt-2 text-center"  role="alert">
+                <span th:text="${errorMsg}"></span>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <!-- Left Column: Image Gallery -->
+            <div class="col-md-5">
+                <div class="row">
+                    <div class="col-12">
+                        <img th:src="@{${product.image}}" class="main-img card" alt="product">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Product Details -->
+            <div class="col-md-7">
+                <h1 class="h4"><span th:text="${product.title}"></span> | [[${product.description}]]</h1>
+                <p><a href="/" class="text-decoration-none">Visit the Shopify Store</a></p>
+
+                <!-- Price Section -->
+                <div class="my-3">
+                    <span class="h3">₹[[${product.discountedPrice}]]</span>
+                    <span class="price-strike mx-2">M.R.P.: ₹[[${product.price}]]</span>
+                    <span class="save-text">[[${product.discount}]]% off</span>
+                </div>
+
+                <!-- EMI and Offers -->
+                <p class="emi-text">EMI starts at ₹1,939. No Cost EMI available <a href="#">EMI options</a></p>
+                <p class="offer-text">Save Extra with 2 offers</p>
+                <p><strong>Bank Offer:</strong> Flat 5% Instant Discount on ALL Banks Credit and Debit Card Trxns, Minimum purchase value INR 38999 <a href="#">Details</a></p>
+                <p><strong>No Cost EMI:</strong> Avail No Cost EMI on select cards for orders above ₹3000 <a href="#">Details</a></p>
+
+                <div th:if="${product.stock > 0}">
+
+                    <span th:if="${loggedInUser == null}">
+                        <a th:href="@{/signIn}" class="btn btn-buy" style="background-color: #1a73e8;">Buy Now</a>
+                        <a th:href="@{/signIn}" class="btn btn-add-to-cart btn-warning">Add to Cart</a>
+                    </span>
+
+                    <span th:unless="${loggedInUser == null}">
+                        <a th:href="@{/user/checkout(price=${product.discountedPrice},userId=${loggedInUser.id})}"  class="btn btn-buy" style="background-color: #1a73e8;">Buy Now</a>
+                        <a th:href="@{/addToCart(pid=${product.id},uid=${loggedInUser.id})}" class="btn btn-add-to-cart btn-warning">Add to Cart</a>
+                    </span>
+
+                </div>
+
+                <div th:if="${product.stock <= 0}">
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                        <div class="text-center mx-auto">
+                            <strong>Out of Stock</strong> - This item is currently unavailable.
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Icons for Additional Info -->
+                <div class="d-flex justify-content-between text-center mt-3">
+                    <div>
+                        <i class="fa-solid fa-right-left"></i>
+                        <p>7 Days Replacement</p>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-award"></i>
+                        <p>1 Year Warranty</p>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-truck"></i>
+                        <p>Pay on Delivery</p>
+                    </div>
+                    <div>
+                        <i class="fa-regular fa-building"></i>
+                        <p>Top Brand</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-cart3"></i>
+                        <p>Shopify Delivered</p>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <p>Secure Transaction</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Footer Starts-->
+    <footer>
+        <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+    </footer>
+    <!-- Footer Ends-->
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+
+</body>
+</html>

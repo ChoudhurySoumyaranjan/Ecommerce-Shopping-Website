@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin profile management for secure dashboard access and settings.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Admin Profile | Secure Dashboard</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --light-bg: linear-gradient(135deg, #f0f4ff 0%, #d0e1ff 100%);
+            --dark-bg: linear-gradient(135deg, #1e2a44 0%, #0f172a 100%);
+            --light-card-bg: linear-gradient(145deg, #ffffff, #e6f0fa);
+            --dark-card-bg: linear-gradient(145deg, #2d3748, #1f2a44);
+            --light-text: #1a202c;
+            --dark-text: #e2e8f0;
+        }
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            transition: background 0.4s ease;
+            overflow-x: hidden;
+        }
+        body.light-theme {
+            background: var(--light-bg);
+        }
+        body.dark-theme {
+            background: var(--dark-bg);
+        }
+        .profile-container {
+            max-width: 850px;
+            width: 95%;
+            border-radius: 20px;
+            padding: 3rem;
+            animation: slideIn 0.7s ease-out;
+            transition: background 0.4s ease, color 0.4s ease;
+            position: relative;
+        }
+        .light-theme .profile-container {
+            background: var(--light-card-bg);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            color: var(--light-text);
+        }
+        .dark-theme .profile-container {
+            background: var(--dark-card-bg);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+            color: var(--dark-text);
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        .profile-header img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid var(--primary-color);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .profile-header img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .profile-header h1 {
+            font-size: 2.4rem;
+            margin: 1.2rem 0 0.6rem;
+            font-weight: 700;
+        }
+        .role-badge {
+            background: linear-gradient(90deg, var(--primary-color), #3b82f6);
+            color: #fff;
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: inline-block;
+            animation: glow 2s infinite ease-in-out;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--primary-color); }
+            50% { box-shadow: 0 0 15px var(--primary-color); }
+        }
+        .profile-details .card {
+            border: none;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-details .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+        }
+        .light-theme .profile-details .card {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+        }
+        .dark-theme .profile-details .card {
+            background: linear-gradient(145deg, #4b5563, #374151);
+        }
+        .profile-details .card i {
+            color: var(--primary-color);
+            margin-right: 1rem;
+            font-size: 1.3rem;
+            transition: transform 0.3s ease;
+        }
+        .profile-details .card:hover i {
+            transform: rotate(10deg);
+        }
+        .profile-details .card h5 {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        .tooltip-icon {
+            cursor: help;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary-color), #3b82f6);
+            border: none;
+            border-radius: 50px;
+            padding: 0.9rem 2rem;
+            font-weight: 600;
+            transition: all 0.4s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #0056b3, #2563eb);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger-color), #ef4444);
+            border: none;
+            border-radius: 50px;
+            padding: 0.9rem 2rem;
+            font-weight: 600;
+            transition: all 0.4s ease;
+        }
+        .btn-danger:hover {
+            background: linear-gradient(90deg, #c82333, #dc2626);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .btn-theme-toggle {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: linear-gradient(90deg, var(--primary-color), #3b82f6);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .btn-theme-toggle:hover {
+            transform: rotate(360deg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .last-updated {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            text-align: right;
+            margin-top: 2rem;
+            font-style: italic;
+        }
+        .alert-dismissible {
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            animation: slideIn 0.5s ease-out;
+        }
+        .profile-progress {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .progress {
+            height: 1.5rem;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #e5e7eb;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, var(--success-color), #34d058);
+            transition: width 0.6s ease;
+        }
+        @media (max-width: 576px) {
+            .profile-container {
+                padding: 2rem;
+            }
+            .profile-header h1 {
+                font-size: 1.9rem;
+            }
+            .profile-header img {
+                width: 110px;
+                height: 110px;
+            }
+            .btn-primary, .btn-danger {
+                padding: 0.7rem 1.5rem;
+                font-size: 1rem;
+            }
+            .btn-theme-toggle {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+        }
+        .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+    </style>
+</head>
+<body class="light-theme">
+
+    <!-- NavBar Starts-->
+    <header class="sticky-header">
+        <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+    </header>
+    <!-- NavBar Ends-->
+    <div class="profile-container container mt-2 mb-2" role="main" aria-labelledby="profile-title">
+        <!-- Theme Toggle Button -->
+        <button class="btn-theme-toggle" aria-label="Toggle theme" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+
+<!--        &lt;!&ndash; Success/Error Alert &ndash;&gt;-->
+<!--        <div th:if="${message}" class="alert alert-dismissible fade show"-->
+<!--             th:classappend="${messageType == 'success' ? 'alert-success' : 'alert-danger'}" role="alert">-->
+<!--            <span th:text="${message}"></span>-->
+<!--            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--        </div>-->
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <img th:src="@{${admin.image}}" alt="Admin Profile Image" aria-label="Admin profile image" />
+            <h1 id="profile-title" th:text="${admin.name} ?: 'Admin Name'"></h1>
+            <span class="role-badge" th:text="${admin.role} ?: 'Administrator'"></span>
+            <!-- Profile Completion Progress -->
+            <div class="profile-progress">
+                <p>Profile Completion: 100%</p>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="profile-details">
+            <div class="card">
+                <h5>
+                    <i class="fas fa-envelope" aria-hidden="true"></i> Email
+                    <i class="fas fa-info-circle tooltip-icon" data-bs-toggle="tooltip" data-bs-placement="right"
+                       title="Your registered email address for communication and login."></i>
+                </h5>
+                <p th:text="${admin.email} ?: 'email@example.com'" aria-label="Admin email"></p>
+            </div>
+            <div class="card">
+                <h5>
+                    <i class="fas fa-user-shield" aria-hidden="true"></i> Role
+                    <i class="fas fa-info-circle tooltip-icon" data-bs-toggle="tooltip" data-bs-placement="right"
+                       title="Your assigned role determines your access level in the system."></i>
+                </h5>
+                <p th:text="${admin.role} ?: 'Administrator'" aria-label="Admin role"></p>
+            </div>
+            <div class="card">
+                <h5>
+                    <i class="fas fa-building" aria-hidden="true"></i> Department
+                    <i class="fas fa-info-circle tooltip-icon" data-bs-toggle="tooltip" data-bs-placement="right"
+                       title="The department you are associated with in the organization."></i>
+                </h5>
+                <p aria-label="Admin department">Administrator</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-5">
+            <a href="#" class="btn btn-primary" role="button" aria-label="Edit profile">
+                <i class="fas fa-edit"></i> Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto">
+        <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+    </footer>
+
+    <!-- Bootstrap JS and Popper.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            if (body.classList.contains('light-theme')) {
+                body.classList.replace('light-theme', 'dark-theme');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.replace('dark-theme', 'light-theme');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Initialize theme, CSRF, and tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(savedTheme + '-theme');
+            const themeIcon = document.getElementById('theme-icon');
+            themeIcon.classList.add(savedTheme === 'light' ? 'fa-moon' : 'fa-sun');
+
+            // CSRF token handling for forms
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(event) {
+                    if (!form.querySelector('input[name="_csrf"]')) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = '_csrf';
+ unsettling. input.value = csrfToken;
+                        form.appendChild(input);
+                    }
+                });
+            });
+
+            // Initialize Bootstrap tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        });
+    </script>
+</body>
+</html>

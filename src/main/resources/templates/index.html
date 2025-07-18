@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>E-commerce Store</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+              rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+              crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            }
+
+            .hero-section {
+                background: linear-gradient(135deg, #3498db, #8e44ad);
+                color: white;
+                padding: 60px 0;
+            }
+
+            .category-section {
+                padding: 60px 0;
+                background: #f8f9fa;
+            }
+            .category-card {
+                transition: all 0.3s ease;
+                border: none;
+                border-radius: 15px;
+                overflow: hidden;
+                background: #ffffff;
+                box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+                position: relative;
+            }
+            .category-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            }
+            .category-card img {
+                height: 220px;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+            .category-card:hover img {
+                transform: scale(1.05);
+            }
+            .category-card .card-body {
+                padding: 20px;
+                text-align: center;
+            }
+            .category-card .card-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 10px;
+            }
+            .category-card .card-text {
+                font-size: 1rem;
+                color: #6c757d;
+                margin-bottom: 15px;
+            }
+            .category-card .btn {
+                background: linear-gradient(135deg, #007bff, #0056b3);
+                border: none;
+                border-radius: 25px;
+                padding: 10px 20px;
+                font-weight: 600;
+                transition: background 0.3s ease;
+            }
+            .category-card .btn:hover {
+                background: linear-gradient(135deg, #0056b3, #003d80);
+            }
+            .section-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #2c3e50;
+                margin-bottom: 40px;
+                text-align: center;
+                position: relative;
+            }
+            .section-title::after {
+                content: '';
+                width: 80px;
+                height: 4px;
+                background: linear-gradient(135deg, #3498db, #8e44ad);
+                position: absolute;
+                bottom: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 2px;
+            }
+            @media (max-width: 576px) {
+                .category-card img {
+                    height: 160px;
+                }
+                .category-card .card-title {
+                    font-size: 1.25rem;
+                }
+                .category-card .card-text {
+                    font-size: 0.9rem;
+                }
+                .section-title {
+                    font-size: 2rem;
+                }
+                .hero-section {
+                    padding: 30px 0;
+                }
+            }
+
+            .search-container {
+                width: 650px;
+                margin: 50px auto;
+                padding: 0 15px;
+            }
+            .search-form {
+                position: relative;
+            }
+            .search-form .form-control {
+                border-radius: 25px;
+                padding: 12px 50px 12px 20px;
+                border: 1px solid #ced4da;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .search-form .btn {
+                position: absolute;
+                right: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+                border-radius: 25px;
+                padding: 8px 15px;
+            }
+            .search-form .form-control:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+            }
+            @media (max-width: 576px) {
+                .search-container {
+                    margin: 20px auto;
+                }
+                .search-form .form-control {
+                    padding: 10px 45px 10px 15px;
+                }
+                .search-form .btn {
+                    padding: 6px 12px;
+                }
+            }
+
+            .offer-section {
+                background-color: #ffffff;
+                padding: 40px 0;
+            }
+            .offer-card {
+                background: #e74c3c;
+                color: white;
+                border-radius: 10px;
+                padding: 20px;
+            }
+            .bank-offer {
+                background: #27ae60;
+                color: white;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            @media (max-width: 576px) {
+                .category-card img {
+                    height: 150px;
+                }
+                .hero-section {
+                    padding: 30px 0;
+                }
+            }
+
+            .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <!-- NavBar Starts-->
+        <header class="sticky-header">
+            <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+        </header>
+        <!-- NavBar Ends-->
+
+        <!-- Hero Section with Search Bar -->
+        <section class="hero-section text-center">
+            <div class="container">
+                <h1 class="display-4 fw-bold">Welcome to Shopify</h1>
+                <p class="lead">Discover the best deals on your favorite products!</p>
+                <div class="search-bar">
+                    <div class="input-group mb-3">
+                        <div class="search-container">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="search-container">
+                                            <form class="search-form" action="/productSearch" method="GET">
+                                                <input type="text" class="form-control search-input" name="search"
+                                                       placeholder="Search for Products..." aria-label="Search" required>
+                                                <button type="submit" class="btn search-button">Search</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bank Discounts -->
+        <section class="container my-5">
+            <h2 class="text-center mb-4">Bank Offers</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="bank-offer">
+                        <h4><i class="fas fa-credit-card"></i> SBI Card Offer</h4>
+                        <p>Get 10% instant discount on SBI Credit Cards (Max ₹1500 off)</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bank-offer">
+                        <h4><i class="fas fa-credit-card"></i> HDFC Bank Offer</h4>
+                        <p>5% cashback on HDFC Debit/Credit Cards (Max ₹1000 off)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Categories -->
+        <section class="category-section">
+            <div class="container">
+                <h2 class="section-title">Explore Our Categories</h2>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                    <div class="col" th:each="category : ${categories}">
+                        <div class="category-card">
+                            <img th:src="@{${category.image}}" class="card-img-top" alt="Category Image">
+                            <div class="card-body">
+                                <h5 class="card-title">[[${category.name}]]</h5>
+                                <p class="card-text">Browse our curated selection of [[${category.name}]] products!</p>
+                                <a th:href="@{/products(category=${category.name})}" class="btn btn-primary">Explore Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Offers Section -->
+        <section class="offer-section">
+            <div class="container">
+                <h2 class="text-center mb-4">Exclusive Offers</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="offer-card">
+                            <h4><i class="fas fa-bolt"></i> Flash Sale</h4>
+                            <p>Up to 50% off on select electronics!</p>
+                            <a href="products" class="btn btn-light">Shop Now</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="offer-card">
+                            <h4><i class="fas fa-gift"></i> Buy 1 Get 1</h4>
+                            <p>Buy one clothing item, get another free!</p>
+                            <a href="products" class="btn btn-light">Shop Now</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="offer-card">
+                            <h4><i class="fas fa-shipping-fast"></i> Free Shipping</h4>
+                            <p>Free shipping on orders above ₹999!</p>
+                            <a href="products" class="btn btn-light">Shop Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Starts-->
+        <footer>
+            <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+        </footer>
+        <!-- Footer Ends-->
+
+        <!-- Bootstrap JS and Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+                crossorigin="anonymous">
+        </script>
+    </body>
+</html>

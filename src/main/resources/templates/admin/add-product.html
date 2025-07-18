@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --error-color: #ef4444;
+            --success-color: #22c55e;
+            --border-radius: 12px;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7ff, #e9d5ff);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .form-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--glass-shadow);
+            max-width: 600px;
+            width: 100%;
+            margin: 2.5rem auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .form-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            color: #1e3a8a;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: -0.025em;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            color: #1f2937;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #e5e7eb;
+            border-radius: var(--border-radius);
+            padding: 0.875rem 1.25rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            outline: none;
+        }
+
+        .form-control.is-invalid, .form-select.is-invalid {
+            border-color: var(--error-color);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .invalid-feedback {
+            color: var(--error-color);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .form-control.is-invalid ~ .invalid-feedback,
+        .form-select.is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(90deg, var(--primary-color), #60a5fa);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, var(--primary-hover), #3b82f6);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            padding: 1rem;
+            font-size: 0.95rem;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .image-preview {
+            margin-top: 0.5rem;
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: var(--border-radius);
+            display: none;
+            object-fit: cover;
+        }
+
+        @media (max-width: 576px) {
+            .form-container {
+                margin: 1.5rem;
+                padding: 2rem;
+            }
+
+            .form-container h2 {
+                font-size: 1.75rem;
+            }
+
+            .form-control, .form-select {
+                padding: 0.75rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- NavBar Starts-->
+<header class="sticky-header">
+    <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+</header>
+<!-- NavBar Ends-->
+
+<div class="form-container">
+    <h2>Add Product</h2>
+
+    <div th:if="${successMsg}">
+        <div class="alert alert-success text-center" role="alert">
+            <span th:text="${successMsg}"></span>
+        </div>
+    </div>
+
+    <div th:if="${errorMsg}">
+        <div class="alert alert-danger text-center" role="alert">
+            <span th:text="${errorMsg}"></span>
+        </div>
+    </div>
+
+    <form th:action="@{/admin/handleAddProductForm}" method="post" th:object="${productObj}" enctype="multipart/form-data" id="productForm">
+        <div class="form-group">
+            <label for="title" class="form-label">Product Title</label>
+            <input type="text" class="form-control" id="title" name="title"
+                   placeholder="Enter product title" th:field="*{title}"
+                   aria-describedby="titleError" required>
+            <div class="invalid-feedback" id="titleError"
+                 th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description"
+                      rows="4" placeholder="Enter product description" th:field="*{description}"
+                      aria-describedby="descriptionError"></textarea>
+            <div class="invalid-feedback" id="descriptionError"
+                 th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-6">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category" th:field="*{category}"
+                        aria-describedby="categoryError" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option th:each="cat: ${categoryList}" th:value="${cat.name}" th:text="${cat.name}"></option>
+                </select>
+                <div class="invalid-feedback" id="categoryError"
+                     th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+            </div>
+
+            <div class="form-group col-6">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" class="form-control" id="price" name="price"
+                       placeholder="Enter price" th:field="*{price}" min="0" step="0.01"
+                       aria-describedby="priceError" required>
+                <div class="invalid-feedback" id="priceError"
+                     th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="stock" class="form-label">Stock Quantity</label>
+                    <input type="number" class="form-control" id="stock" name="stock"
+                           placeholder="Enter stock quantity" th:field="*{stock}" min="0"
+                           aria-describedby="stockError" required>
+                    <div class="invalid-feedback" id="stockError"
+                         th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="image" class="form-label">Product Image</label>
+                    <input type="file" class="form-control" id="image" name="img"
+                           accept="image/*" aria-describedby="imageError">
+                    <img id="imagePreview" class="image-preview" alt="Product image preview">
+                    <div class="invalid-feedback" id="imageError"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                <span class="btn-text">Add Product</span>
+                <span class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Adding...
+                    </span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Footer Starts-->
+<footer>
+    <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+</footer>
+<!-- Footer Ends-->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+<script>
+    // Image preview
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('imagePreview');
+    imageInput.addEventListener('change', () => {
+        const file = imageInput.files[0];
+        if (file) {
+            imagePreview.src = URL.createObjectURL(file);
+            imagePreview.style.display = 'block';
+        } else {
+            imagePreview.style.display = 'none';
+        }
+    });
+
+    // Form submission loading state
+    const form = document.getElementById('productForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoading = submitBtn.querySelector('.btn-loading');
+    form.addEventListener('submit', () => {
+        submitBtn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline-flex';
+    });
+
+    // Real-time validation
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', () => {
+            if (input.checkValidity()) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+            }
+        });
+    });
+</script>
+</body>
+</html>

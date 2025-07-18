@@ -1,0 +1,41 @@
+#removeUnderLineCss{
+    text-decoration:none;
+}
+
+.search-container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .search-form {
+            display: flex;
+            align-items: center;
+        }
+        .search-input {
+            border-radius: 25px 0 0 25px;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-right: none;
+        }
+        .search-button {
+            border-radius: 0 25px 25px 0;
+            padding: 10px 20px;
+            background-color: #3B82F6;
+            border-color: #007bff;
+            color: white;
+            font-size: 16px;
+        }
+        .search-button:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        @media (max-width: 576px) {
+            .search-input {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+            .search-button {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+        }

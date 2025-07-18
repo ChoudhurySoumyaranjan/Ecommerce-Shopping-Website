@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+    <!-- Custom CSS for enhancements -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            font-size: 1.75rem;
+            margin-bottom: 20px;
+            color: #343a40;
+            text-align: center;
+        }
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .form-control, .form-select {
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            padding: 10px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+    </style>
+</head>
+<body>
+<!-- NavBar Starts-->
+<header class="sticky-header">
+    <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+</header>
+<!-- NavBar Ends-->
+
+
+<!-- Form Container -->
+<div class="form-container container-fluid">
+    <h2 class="text-info">Edit Product</h2>
+
+    <div th:if="${successMsg}">
+        <div class="alert alert-success mt-2" role="alert">
+            <span th:text="${successMsg}"></span>
+        </div>
+    </div>
+
+    <div th:if="${errorMsg}">
+        <div class="alert alert-danger mt-2" role="alert">
+            <span th:text="${errorMsg}"></span>
+        </div>
+    </div>
+
+    <form th:action="@{/admin/editProductForm}" method="post" th:object="${product}" enctype="multipart/form-data">
+        <!-- Title -->
+        <div class="mb-3">
+            <label for="title" class="form-label">Enter Title</label>
+            <input type="text" class="form-control" id="title" placeholder="Product Title" name="title" th:value="*{title}" readonly>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Enter Description</label>
+            <textarea class="form-control" id="description" rows="3" placeholder="Product Description"   name="description" th:field="${product.description}"></textarea>
+        </div>
+
+            <div class="row">
+                <div class="col-6">
+
+                <!-- Category -->
+<!--                <div class="mb-3">-->
+<!--                    <label for="category" class="form-label">Enter Category</label>-->
+<!--                    <select class="form-select" id="category" name="category" disabled>-->
+<!--                        <option th:each= "cat: ${categoryList}" th:value="${cat.name}"> <span th:text="${cat.name}"></span></option>-->
+<!--                    </select>-->
+<!--                </div>-->
+
+                <!-- Original Price -->
+                <div class="mb-3">
+                    <label for="price" class="form-label">Enter Price</label>
+                    <input type="number" class="form-control" id="price" placeholder="Price" name="price"th:value="*{price}" >
+                </div>
+
+                </div>
+
+                <div class="col-6">
+
+                    <!-- discount -->
+                    <div class="mb-3">
+                        <label for="discount" class="form-label">Enter Discount Percent</label>
+                        <input type="number" class="form-control" id="discount" placeholder="Price" name="discount" th:value="*{discount}" >
+                    </div>
+
+                <!-- Stock -->
+                <div class="mb-3">
+                    <label for="stock" class="form-label">Stock</label>
+                    <input type="number" class="form-control" id="stock" placeholder="Stock Quantity" name="stock" th:value="*{stock}">
+                </div>
+
+                </div>
+
+            </div>
+
+        <!-- Image Upload -->
+        <div class="mb-3">
+            <img th:src="@{*{image}}" height="150px" width="150px">
+            <label for="image" class="form-label"></label>
+            <input type="file" class="form-control" id="image" name="img">
+        </div>
+
+
+        <!-- Submit Button -->
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+
+<!--Footer Starts-->
+<footer>
+    <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+</footer>
+<!-- Footer Ends-->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+        crossorigin="anonymous">
+</script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

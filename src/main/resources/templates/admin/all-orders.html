@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin - All Orders</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+              rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+              crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+        <style>
+            body {
+                background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            .navbar {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+            .order-card {
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                transition: transform 0.2s, box-shadow 0.2s;
+                overflow: hidden;
+            }
+            .order-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            }
+            .status-pending {
+                background-color: #ffe5b4;
+                color: #e67700;
+            }
+            .status-cancelled {
+                background-color: #f8d7da;
+                color: #721c24;
+            }
+            .modal-content {
+                border-radius: 12px;
+                border: none;
+            }
+            .search-filter-bar {
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                margin-bottom: 30px;
+            }
+            .card-header {
+                background-color: #e9ecef;
+                font-weight: 600;
+                font-size: 1.1rem;
+                border-bottom: 1px solid #dee2e6;
+            }
+            .action-section {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+            .pagination {
+                justify-content: center;
+                margin-top: 40px;
+            }
+            .pagination .page-link {
+                border-radius: 8px;
+                margin: 0 5px;
+                transition: background-color 0.2s;
+            }
+            .pagination .page-item.active .page-link {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+            .btn-sm {
+                padding: 5px 12px;
+                font-size: 0.875rem;
+            }
+            .form-select-sm {
+                font-size: 0.875rem;
+                padding: 5px 24px 5px 8px;
+            }
+            img {
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 8px;
+                margin-right: 1rem;
+            }
+
+            .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+        </style>
+    </head>
+    <body>
+
+    <!-- NavBar Starts-->
+    <header class="sticky-header">
+        <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+    </header>
+    <!-- NavBar Ends-->
+
+
+        <!-- Main Content -->
+        <div class="container my-5">
+            <h2 class="text-center mb-4">All Orders</h2>
+
+            <div class="alert alert-secondary text-center mt-2 mb-2" role="alert" th:if="${successMsg}">
+                <span th:text="${successMsg}"></span>
+            </div>
+
+            <div class="alert alert-secondary text-danger" role="alert" th:if="${errorMsg}">
+                <span th:text="${errorMsg}"></span>
+            </div>
+            <!-- Search and Filter Bar -->
+            <div class="search-filter-bar">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-4 shadow-sm p-3 mb-5 bg-white rounded">
+                        <form th:action="@{/admin/search}" method="post">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="orderId" placeholder="Enter Order ID" required>
+                                <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Search</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4 shadow-sm p-3 mb-5 bg-white rounded">
+                        <form th:action="@{/admin/filter}" method="post">
+                            <div class="input-group">
+                                <select class="form-select" name="status" required>
+                                    <option value="" disabled selected>Filter by Order Status</option>
+                                    <option value="all">All</option>
+                                    <option value="OUT FOR DELIVERY">Out for Delivery</option>
+                                    <option value="DELIVERED">Delivered</option>
+                                    <option value="CANCELLED">Cancelled</option>
+                                    <option th:value="'IN TRANSIT'">In Transit</option>
+                                    <option th:value="'ORDER RETURNED'">Order Returned</option>
+                                    <option th:value="'PARCEL THEFT'">Parcel Theft</option>
+                                    <option value="IN PROGRESS">In Progress</option>
+                                </select>
+                                <button class="btn btn-primary" type="submit">Filter</button>
+                            </div>
+                        </form>
+                    </div>
+
+                        <div class="col-md-4 shadow-sm p-3 mb-5 bg-white rounded">
+                            <select class="form-select">
+                                <option selected>Sort by Date</option>
+                                <option>Newest First</option>
+                                <option>Oldest First</option>
+                            </select>
+                        </div>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <!-- Order Card -->
+                <div class="col-md-6 col-lg-4 mb-4" th:each="order : ${orders}">
+                    <div class="card order-card border shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Order [[${order.orderId}]]</span>
+                            <span class="badge status-pending rounded-pill">[[${order.status}]]</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row shadow-sm p-2 mb-3">
+                                <div class="col-6 border-end">
+                                    <img th:src="@{${order.product.image}}" alt="productImage" class="img-fluid">
+                                    <p class="card-text"><strong>Date:</strong> [[${order.orderDate}]]</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="card-text"><strong>Product:</strong> [[${order.product.title}]] (Qty: [[${order.quantity}]])</p>
+                                    <p class="card-text"><strong>Total Price:</strong> ₹[[${order.price}]]</p>
+                                </div>
+                            </div>
+                            <div class="row shadow-sm p-2">
+                                <h6 class="text-center">Delivery Details</h6>
+                                <div class="col-6 border-end">
+                                    <p><strong>Name:</strong> [[${order.orderAddress.firstName}]] [[${order.orderAddress.lastName}]]</p>
+                                    <p><strong>Email:</strong> [[${order.orderAddress.email}]]</p>
+                                </div>
+                                <div class="col-6">
+                                    <p><strong>Mobile:</strong> [[${order.orderAddress.mobileNumber}]]</p>
+                                    <p><strong>Address:</strong> [[${order.orderAddress.address}]]</p>
+                                </div>
+                            </div>
+                            <div class="action-section mt-3 d-flex">
+                                <form th:action="@{/admin/updateStatus}" method="post">
+
+                                    <input type="hidden" th:value="${order.orderId}" name="orderId"/>
+
+                                    <select class="form-select form-select-sm" name="status">
+                                        <option selected>--select--</option>
+                                        <option th:value="'OUT FOR DELIVERY'">Out for Delivery</option>
+                                        <option th:value="'DELIVERED'">Delivered</option>
+                                        <option th:value="'IN TRANSIT'">In Transit</option>
+                                        <option th:value="'ORDER RETURNED'">Order Returned</option>
+                                        <option th:value="'PARCEL THEFT'">Parcel Theft</option>
+                                        <option th:value="'CANCELLED'">Cancelled</option>
+                                        <option th:value="'IN PROGRESS'">In Progress</option>
+                                    </select>
+                                    <th:block th:if="${order.status != 'CANCELLED' AND order.status != 'DELIVERED'}">
+                                        <button class="btn btn-primary btn-sm mt-1" data-bs-toggle="tooltip" title="Update order status" type="submit">Update</button>
+                                    </th:block>
+
+                                    <th:block th:unless="${order.status != 'CANCELLED' AND order.status != 'DELIVERED'}">
+                                        <a class="btn btn-primary btn-sm mt-1 disabled" data-bs-toggle="tooltip">Update</a>
+                                    </th:block>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav th:if="${totalPages > 1}" aria-label="Page navigation">
+                <ul class="pagination">
+                    <!-- Previous Page Link -->
+                    <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" th:href="@{/admin/allOrders(pageNumber=${currentPage - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                        </a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    <li th:each="page : ${#numbers.sequence(1, totalPages)}"
+                        th:class="${page == currentPage} ? 'page-item active' : 'page-item'">
+                        <a class="page-link" th:href="@{/admin/allOrders(pageNumber=${page})}" th:text="${page}"></a>
+                    </li>
+
+                    <!-- Next Page Link -->
+                    <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" th:href="@{/admin/allOrders(pageNumber=${currentPage + 1})}" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!--Footer Starts-->
+        <footer>
+            <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+        </footer>
+        <!-- Footer Ends-->
+
+
+        <!-- Bootstrap JS and Popper.js -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+                crossorigin="anonymous">
+        </script>
+        <script>
+            // Enable tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        </script>
+    </body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Profile - Order Details</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+              rel="stylesheet"
+              integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+              crossorigin="anonymous">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <!-- Custom CSS -->
+        <style>
+
+            body{
+                background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+            }
+
+            .main-img {
+                width: 100%;
+                max-width: 300px;
+                height: auto;
+                object-fit: cover;
+                border-radius: 8px;
+            }
+            .order-card {
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                margin-bottom: 1.5rem;
+            }
+            .order-header {
+                background-color: #f8f9fa;
+                padding: 1rem;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .price-strike {
+                text-decoration: line-through;
+                color: #6c757d;
+            }
+            .discount-text {
+                color: #28a745;
+                font-weight: bold;
+            }
+            .status-badge {
+                font-size: 0.9rem;
+                font-weight: bold;
+            }
+            .pagination {
+                justify-content: center;
+                margin-top: 2rem;
+            }
+
+            .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+        </style>
+    </head>
+
+    <body>
+    <!-- NavBar Starts-->
+    <header class="sticky-header">
+        <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+    </header>
+    <!-- NavBar Ends-->
+
+
+    <!-- Main Content -->
+        <div class="container my-5">
+            <!-- Error Message -->
+            <div th:if="${errorMsg}" class="alert alert-danger text-center" role="alert">
+                <span th:text="${errorMsg}"></span>
+            </div>
+
+            <!-- User Profile Section -->
+            <div th:if="${loggedInUser != null}">
+                <h2 class="mb-4" th:text="'Welcome, ' + ${loggedInUser.loggedInUserName}">User Name</h2>
+
+                <!-- Orders List -->
+                <div th:if="${order}" class="order-card">
+                    <div class="order-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h5 class="mb-0">Order #<span th:text="${order.orderId}"></span></h5>
+                                <small class="text-muted" th:text="'Placed on ' + ${#temporals.format(order.orderDate, 'dd MMM yyyy')}"></small>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                    <span class="badge status-badge" th:text="${order.status}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Product Image -->
+                            <div class="col-md-3">
+                                <img th:src="@{${order.product.image}}"
+                                     class="main-img"
+                                     alt="Product Image"
+                                     th:alt="${order.product.title}">
+                            </div>
+                            <!-- Product Details -->
+                            <div class="col-md-5">
+                                <h5 th:text="${order.product.title}">Product Title</h5>
+                                <p class="text-muted" th:text="${order.product.description}">Product Description</p>
+                                <p><strong>Category:</strong> <span th:text="${order.product.category}"></span></p>
+                                <p><strong>Quantity:</strong> <span th:text="${order.quantity}"></span></p>
+                                <p><strong>Payment Type:</strong> <span th:text="${order.paymentType}"></span></p>
+                            </div>
+                            <!-- Pricing and Address -->
+                            <div class="col-md-4">
+                                <p><strong>Price:</strong> ₹<span th:text="${order.product.discountedPrice}"></span></p>
+                                <p><strong>Original Price:</strong> <span class="price-strike">₹<span th:text="${order.product.price}"></span></span></p>
+                                <p><strong>Discount:</strong> <span class="discount-text" th:text="${order.product.discount} + '%'"></span></p>
+                                <p><strong>Total:</strong> ₹<span th:text="${order.price}"></span></p>
+                                <p><strong>Shipping Address:</strong></p>
+                                <address>
+                                    <span th:text="${order.orderAddress.firstName} + ' ' + ${order.orderAddress.lastName}"></span><br>
+                                    <span th:text="${order.orderAddress.address}"></span>,<br>
+                                    <span th:text="${order.orderAddress.city} + ', ' + ${order.orderAddress.state} + ' - ' + ${order.orderAddress.pinCode}"></span><br>
+                                    <span th:text="${order.orderAddress.mobileNumber}"></span><br>
+                                    <span th:text="${order.orderAddress.email}"></span>
+                                </address>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+        </footer>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+                crossorigin="anonymous"></script>
+    </body>
+</html>

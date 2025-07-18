@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <style>
+        :root {
+            --primary-color: #2874f0;
+            --secondary-color: #fb641b;
+            --text-color: #212121;
+            --bg-light: #f1f3f6;
+            --card-bg: #ffffff;
+            --discount-color: #388e3c;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+            color: var(--text-color);
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 700px;
+            margin: 1.5rem auto;
+            position: relative;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input {
+            border: none;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            flex: 1;
+            font-size: 0.95rem;
+            border-radius: 4px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: inset 0 0 0 2px var(--primary-color);
+        }
+
+        .search-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0 4px 4px 0;
+            transition: background 0.3s;
+        }
+
+        .search-button:hover {
+            background: var(--secondary-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #878787;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 80px;
+            background: var(--card-bg);
+            border-radius: 4px;
+            padding: 1rem;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h5 {
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar .accordion-button {
+            background: transparent;
+            color: var(--primary-color);
+            font-weight: 500;
+            padding: 0.5rem 0;
+        }
+
+        .sidebar .accordion-button:focus {
+            box-shadow: none;
+        }
+
+        .sidebar a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Product Card */
+        .product-card {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card img {
+            height: 180px;
+            object-fit: contain;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .product-card .card-body {
+            padding: 1rem;
+        }
+
+        .product-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.4rem;
+        }
+
+        .price-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #878787;
+            font-size: 0.85rem;
+        }
+
+        .discount {
+            color: var(--discount-color);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--discount-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+            color: #388e3c;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-details-btn, .add-to-cart-btn {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .view-details-btn {
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .view-details-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .add-to-cart-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #e55b13;
+        }
+
+        /* Sorting and Filtering */
+        .sort-filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .sort-filter-container select {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+            font-size: 0.9rem;
+            min-width: 150px;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        /* Skeleton Loading */
+        .skeleton-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            height: 300px;
+            animation: skeleton-loading 1.5s infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-color: #f2f2f2; }
+            50% { background-color: #e5e7eb; }
+            100% { background-color: #f2f2f2; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: static;
+                margin-bottom: 1.5rem;
+            }
+
+            .sort-filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .product-card img {
+                height: 150px;
+            }
+
+            .product-title {
+                font-size: 0.9rem;
+            }
+        }
+        .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+    </style>
+</head>
+<body>
+<!-- NavBar Starts-->
+<header class="sticky-header">
+    <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+</header>
+<!-- NavBar Ends-->
+
+<main class="container-fluid py-4">
+    <!-- Search Bar -->
+    <div class="search-container">
+        <form class="search-form" th:action="@{/productSearch}" method="GET">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control search-input" name="search" placeholder="Search for products, brands and more..."
+                   aria-label="Search" required>
+            <button type="submit" class="btn search-button">Search</button>
+        </form>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar -->
+        <aside class="col-lg-3 col-md-4 mb-4">
+            <div class="sidebar">
+                <h5>Categories</h5>
+                <div class="accordion" id="categoryAccordion">
+                    <div class="accordion-item border-0">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#categoriesCollapse" aria-expanded="true" aria-controls="categoriesCollapse">
+                                Shop By Category
+                            </button>
+                        </h2>
+                        <div id="categoriesCollapse" class="accordion-collapse collapse show" data-bs-parent="#categoryAccordion">
+                            <div class="accordion-body p-0">
+                                <ul class="list-unstyled">
+                                    <li><a th:href="@{/products}" class="d-block py-2">All</a></li>
+                                    <li th:each="category : ${categories}">
+                                        <a th:href="@{/products(category=${category.name})}" class="d-block py-2"
+                                           th:text="${category.name}"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Products Grid -->
+        <div class="col-lg-9 col-md-8">
+            <div class="sort-filter-container">
+                <div>
+                    <label for="sortSelect" class="me-2">Sort by:</label>
+                    <select id="sortSelect" class="form-select">
+                        <option value="relevance">Relevance</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="newest">Newest First</option>
+                        <option value="popularity">Popularity</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filterSelect" class="me-2">Filter by:</label>
+                    <select id="filterSelect" class="form-select">
+                        <option value="all">All Products</option>
+                        <option value="in-stock">In Stock</option>
+                        <option value="on-sale">On Sale</option>
+                        <option value="high-rated">Highly Rated</option>
+                    </select>
+                </div>
+            </div>
+
+            <div th:unless="${errorMsg}">
+                <h4 class="mb-4 text-center fw-bold">Our Products</h4>
+            </div>
+            <div th:if="${errorMsg}" class="d-flex justify-content-center">
+                <div class="alert alert-danger mt-2 text-center mx-auto" role="alert">
+                    <span th:text="${errorMsg}"></span>
+                </div>
+            </div>
+
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+            </div>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                <!-- Skeleton Loading -->
+                <div class="col mb-3" th:unless="${products}">
+                    <div class="skeleton-card"></div>
+                </div>
+                <!-- Product Card -->
+                <div class="col mb-3" th:each="product : ${products}">
+                    <div class="card product-card">
+                        <div class="position-relative">
+                            <img th:src="@{${product.image}}" class="card-img-top" th:alt="${product.title}"
+                                 width="285px" height="285px">
+                            <span class="discount-badge" th:text="${product.discount + '% OFF'}"></span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="product-title" th:text="${product.title}"></h5>
+                            <div class="rating">
+                                <span>4.2</span>
+                                <i class="fas fa-star text-warning"></i>
+                                <span class="text-muted">(<span>999+</span>)</span>
+                            </div>
+                            <div class="price-container">
+                                <span class="discount">₹ <span th:text="${product.discountedPrice}"></span></span>
+                                <span class="original-price">₹ <span th:text="${product.price}"></span></span>
+                            </div>
+                            <div class="action-buttons">
+                                <a th:href="@{/viewProduct(id=${product.id})}" class="btn view-details-btn">View Details</a>
+                                <th:block sec:authorize="isAuthenticated() AND hasRole('USER')">
+                                    <a class="btn add-to-cart-btn"
+                                       th:href="@{/addToCart(pid=${product.id},uid=${loggedInUser.id})}">Add to Cart</a>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer Starts -->
+<footer>
+    <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+</footer>
+<!-- Footer Ends -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    // Simulate loading state
+    window.addEventListener('load', function() {
+        const spinner = document.querySelector('.loading-spinner');
+        spinner.classList.add('active');
+        setTimeout(() => {
+            spinner.classList.remove('active');
+        }, 1000);
+    });
+
+    // Client-side sorting simulation
+    document.getElementById('sortSelect')?.addEventListener('change', function() {
+        const sortValue = this.value;
+        // Implement sorting logic or trigger server-side sort
+        console.log('Sorting by:', sortValue);
+    });
+
+    // Client-side filtering simulation
+    document.getElementById('filterSelect')?.addEventListener('change', function() {
+        const filterValue = this.value;
+        // Implement filtering logic or trigger server-side filter
+        console.log('Filtering by:', filterValue);
+    });
+
+    // Add to cart button simulation
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            alert('Product added to cart!');
+            // Implement actual cart functionality
+        });
+    });
+</script>

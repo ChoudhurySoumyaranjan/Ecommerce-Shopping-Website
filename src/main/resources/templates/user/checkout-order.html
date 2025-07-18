@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-Out Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+        }
+        .order-form-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        .price-summary {
+            background-color: #f1f3f5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .price-total {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #0d6efd;
+        }
+        .btn-place-order {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+    </style>
+
+</head>
+<body>
+
+<!-- NavBar Starts-->
+<header class="sticky-header">
+    <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+</header>
+<!-- NavBar Ends-->
+
+
+<main class="order-form-container">
+
+        <div class="alert alert-secondary text-danger" role="alert" th:if="${errorMsg}">
+            <span th:text="${errorMsg}"></span>
+        </div>
+
+        <form method="post" th:action="@{/user/submitCheckOutOrderForm}" th:object="${orderRequest}">
+        <div class="row">
+            <!-- Address Section -->
+            <div class="col-md-6 mb-4">
+                <h2 class="section-title">Billing Address</h2>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <input type="hidden" name="loggedInUserId" th:value="${loggedInUserId}">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" name="firstName" required placeholder="Enter First Name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" name="lastName" required placeholder="Enter Last Name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="john.doe@example.com" name="email" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                        <input type="tel" class="form-control" id="mobile" name="mobileNumber" required placeholder="Enter Phone Number">
+                    </div>
+                    <div class="col-12">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder="Enter Your Address">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" name="city" placeholder="Enter Your City">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" class="form-control" id="state" name="state" placeholder="Enter Your State">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="pincode" class="form-label">Pincode</label>
+                        <input type="text" class="form-control" id="pincode" name="pinCode" placeholder="Enter your Pincode">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="col-md-6">
+                <h2 class="section-title">Payment Details</h2>
+                <div class="price-summary mb-4">
+                    <div class="price-item">
+                        <span>Total Price:</span>
+                        <span>₹ [[${subTotalPrice}]]</span>
+                    </div>
+                    <div class="price-item">
+                        <span>Delivery Fee:</span>
+                        <span>₹ 250</span>
+                    </div>
+                    <div class="price-item">
+                        <span>Tax:</span>
+                        <span>₹ 100</span>
+                    </div>
+                    <hr>
+                    <div class="price-item price-total">
+                        <span>Total Price:</span>
+                        <span>₹ [[${subTotalPrice + 350}]]</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="paymentType" class="form-label">Select Payment Type</label>
+                    <select class="form-select" id="paymentType" name="paymentType">
+                        <option selected disabled>--select--</option>
+                        <option value="credit">Credit Card</option>
+                        <option value="debit">Debit Card</option>
+                        <option value="upi">UPI</option>
+                        <option value="cod">Cash on Delivery</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-place-order mt-4" type="submit">Place Order</button>
+            </div>
+        </div>
+        </form>
+
+    </main>
+
+
+<!--Footer Starts-->
+<footer>
+    <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+</footer>
+<!-- Footer Ends-->
+
+<!-- Bootstrap JS and Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+            crossorigin="anonymous">
+    </script>
+</body>
+</html>

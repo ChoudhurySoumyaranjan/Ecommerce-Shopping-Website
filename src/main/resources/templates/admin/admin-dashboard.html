@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN (example) -->
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #415878;
+            --accent-color: #e0e7ff;
+            --text-color: #1f2937;
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            --dark-bg: #1f2937;
+            --dark-text: #f3f4f6;
+            --dark-card: #374151;
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            --text-color: var(--dark-text);
+            --primary-color: #4b5eAA;
+            --secondary-color: #60a5fa;
+            --accent-color: #b4c1d6;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+
+        .theme-toggle {
+            cursor: pointer;
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover {
+            color: var(--accent-color);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: #2e415c;
+            color: white;
+            height: 100vh;
+            padding: 1.5rem;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            transition: width 0.3s ease, transform 0.3s ease;
+            z-index: 1040;
+        }
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        .sidebar.collapsed h2, .sidebar.collapsed .sidebar-text {
+            display: none;
+        }
+        .sidebar.collapsed a i {
+            margin-right: 0;
+            font-size: 1.5rem;
+        }
+        .sidebar h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        .sidebar a:hover {
+            background: var(--secondary-color);
+            transform: translateX(5px);
+            color: white;
+        }
+        .sidebar a i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        .sidebar-toggle {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+        .sidebar-toggle:hover {
+            color: white;
+        }
+
+        /* Main Content */
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            color: var(--text-color);
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .dashboard-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+        [data-theme="dark"] .dashboard-item {
+            background: var(--dark-card);
+            color: var(--dark-text);
+        }
+        .dashboard-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        .dashboard-item img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+        .dashboard-item:hover img {
+            transform: scale(1.1);
+        }
+        .dashboard-item a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+<!--            border-bottom: 2px solid var(&#45;&#45;secondary-color);-->
+            transition: var(--transition);
+        }
+        [data-theme="dark"] .dashboard-item a {
+            color: var(--accent-color);
+        }
+        .dashboard-item a:hover {
+            color: var(--secondary-color);
+        }
+
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 220px;
+            }
+            .sidebar.collapsed {
+                width: 60px;
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                box-shadow: none;
+                transform: translateX(0);
+            }
+            .sidebar.collapsed {
+                transform: translateX(-100%);
+            }
+            .container {
+                padding: 1rem;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+            .sticky-header {
+               position: sticky;
+               top: 0;
+               z-index: 1050; /* ensure it's above all other content */
+           }
+    </style>
+</head>
+<body>
+
+<!-- NavBar Starts-->
+<header class="sticky-header">
+    <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+</header>
+<!-- NavBar Ends-->
+
+<!-- Main Content -->
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <i class="bi bi-list sidebar-toggle" id="sidebarToggle" role="button" aria-label="Toggle sidebar"></i>
+        <h2>Admin Menu</h2>
+        <a href="#"><i class="bi bi-person-lines-fill"></i><span class="sidebar-text">Employees</span></a>
+        <a href="#"><i class="bi bi-gear"></i><span class="sidebar-text">Settings</span></a>
+        <a href="#"><i class="bi bi-person"></i><span class="sidebar-text">Queries</span></a>
+        <a href="#"><i class="bi bi-receipt-cutoff"></i><span class="sidebar-text">Sales</span></a>
+        <a href="#"><i class="bi bi-chat-dots"></i><span class="sidebar-text">Feedback</span></a>
+        <a href="#"><i class="bi bi-bag-fill"></i><span class="sidebar-text">Products</span></a>
+        <a href="#"><i class="bi bi-door-closed"></i><span class="sidebar-text">Logout</span></a>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h3 class="text-primary mb-4">Admin Dashboard</h3>
+        <div class="dashboard-grid">
+            <div class="dashboard-item">
+                <a th:href="@{/admin/addProduct}" aria-label="Add Product">
+                    <img src="https://img.icons8.com/ios-filled/50/1e40af/plus-math.png" alt="Add Product Icon"><p>Add Product</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a th:href="@{/admin/openCategory}" aria-label="Category">
+                    <img src="https://img.icons8.com/ios-filled/50/1e40af/category.png" alt="Category Icon"><p>Category</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a th:href="@{/admin/viewAllProducts}" aria-label="View Products">
+                    <img src="https://img.icons8.com/ios-filled/50/1e40af/book.png" alt="View Product Icon"><p>View Products</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a th:href="@{/admin/allOrders}" aria-label="Orders">
+                    <img src="https://img.icons8.com/ios-filled/50/1e40af/box.png" alt="Orders Icon"><p>Orders</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a th:href="@{/admin/users}" aria-label="Users">
+                    <img src="https://img.icons8.com/ios-filled/50/1e40af/user.png" alt="User Icon"><p>Customers</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a th:href="@{/admin/register}" aria-label="Add Admin">
+                    <img src="https://img.icons8.com/ios-filled/50/1e40af/administrator-male.png" alt="Add Admin Icon"><p>Add Admin</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a href="#" aria-label="View Admins">
+                    <img src="https://img.icons8.com/?size=100&id=bhvRs12swjdo&format=png&color=000000" alt="View Admin Icon"><p>Add Employee</p>
+                </a>
+            </div>
+            <div class="dashboard-item">
+                <a th:href="@{/admin/editAdmin}" aria-label="Edit Admin">
+                    <img src="https://img.icons8.com/?size=100&id=HHk1T1qaHGPx&format=png&color=000000" alt="Edit Admin Icon"><p>Edit Admin</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Footer Starts-->
+<footer>
+    <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+</footer>
+<!-- Footer Ends-->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    // Sidebar Toggle
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        sidebarToggle.classList.toggle('bi-list');
+        sidebarToggle.classList.toggle('bi-x');
+    });
+
+    // Dark Mode Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+        document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        themeToggle.classList.toggle('bi-moon-stars-fill');
+        themeToggle.classList.toggle('bi-sun-fill');
+    });
+
+    // Accessibility: Keyboard navigation for sidebar toggle
+    sidebarToggle.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            sidebar.classList.toggle('collapsed');
+            sidebarToggle.classList.toggle('bi-list');
+            sidebarToggle.classList.toggle('bi-x');
+        }
+    });
+
+    // Accessibility: Keyboard navigation for theme toggle
+    themeToggle.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            document.body.dataset.theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            themeToggle.classList.toggle('bi-moon-stars-fill');
+            themeToggle.classList.toggle('bi-sun-fill');
+        }
+    });
+</script>
+</body>
+</html>

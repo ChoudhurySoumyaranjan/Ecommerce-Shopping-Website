@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Orders - Shopify</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+              rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+              crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+        <style>
+            body {
+                font-family: 'Inter', sans-serif;
+                background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+                min-height: 100vh;
+            }
+            .navbar {
+                padding: 1rem 2rem;
+            }
+            .navbar a {
+                transition: color 0.3s;
+            }
+<!--            .navbar a:hover {-->
+<!--                color: #e0e7ff;-->
+<!--            }-->
+            .dropdown-menu {
+                max-height: 300px;
+                overflow-y: auto;
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+            .dropdown-item {
+                padding: 0.75rem 1rem;
+                transition: background 0.3s;
+            }
+            .dropdown-item:hover {
+                background: #f3f4f6;
+            }
+            .order-card {
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+                transition: transform 0.3s, box-shadow 0.3s;
+                margin-bottom: 1.5rem;
+            }
+            .order-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            }
+            .btn-cancel {
+                background: #ef4444;
+                color: #fff;
+                padding: 0.5rem 1rem;
+                border-radius: 6px;
+                transition: background 0.3s;
+            }
+            .btn-cancel:hover {
+                background: #dc2626;
+            }
+            .status-in-progress {
+                color: #4f46e5;
+                font-weight: 500;
+            }
+            .product-details img {
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 8px;
+                margin-right: 1rem;
+            }
+            .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+        </style>
+    </head>
+
+        <body>
+
+        <!-- NavBar Starts-->
+        <header class="sticky-header">
+            <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+        </header>
+        <!-- NavBar Ends-->
+
+
+        <!-- Orders Section -->
+            <div class="container mx-auto mt-10 px-4">
+
+                    <h2 class="text-3xl font-semibold text-gray-800 mb-8 text-center">Orders</h2>
+
+
+                    <div class="alert alert-secondary text-center mt-2 mb-2" role="alert" th:if="${successMsg}">
+                        <span th:text="${successMsg}"></span>
+                    </div>
+
+                    <div class="alert alert-secondary text-danger" role="alert" th:if="${errorMsg}">
+                        <span th:text="${errorMsg}"></span>
+                    </div>
+
+                    <th:block th:if="${orders != null}">
+                        <div th:each="order : ${orders}" class="order-card p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+                                <div class="col-span-1">
+                                    <p class="text-sm font-medium text-gray-600">Order ID</p>
+                                    <p class="text-gray-800" th:text="${order.orderId}"></p>
+                                </div>
+                                <div class="col-span-1">
+                                    <p class="text-sm font-medium text-gray-600">Date</p>
+                                    <p class="text-gray-800" th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}"></p>
+                                </div>
+                                <div class="col-span-1 product-details flex items-center">
+                                    <img th:src="${order.product.image}" alt="Product Image">
+                                    <span class="text-gray-800" th:text="${order.product.title}"></span>
+                                </div>
+                                <div class="col-span-1">
+                                    <p class="text-sm font-medium text-gray-600">Price</p>
+                                    <p>Qty: <span th:text="${order.quantity}"></span></p>
+                                    <p>Unit: <span th:text="'₹' + ${order.price}"></span></p>
+                                    <p class="font-semibold">Total: <span th:text="'₹' + ${order.quantity * order.price}"></span></p>
+                                </div>
+                                <div class="col-span-1">
+                                    <p class="text-sm font-medium text-gray-600">Status</p>
+                                    <p class="status-in-progress" th:text="${order.status}"></p>
+                                </div>
+                                <div class="col-span-1">
+
+                                    <th:block th:if="${order.status != 'CANCELLED'}">
+                                        <a class="btn btn-cancel" th:href="@{/user/cancel(orderId=${order.orderId})}">Cancel</a>
+                                    </th:block>
+
+                                    <th:block th:unless="${order.status != 'CANCELED' }">
+                                        <a class="btn btn-cancel disabled" href="#">Cancel</a>
+                                    </th:block>
+
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                <div th:if="${orders == null or #lists.isEmpty(orders)}" class="text-center text-gray-600 mt-10">
+                    <p class="text-lg">[[${errorMsg}]]</p>
+                </div>
+
+                <!-- Pagination -->
+                <nav th:if="${totalPages > 1}" aria-label="Page navigation">
+                    <ul class="pagination">
+                        <!-- Previous Page Link -->
+                        <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                            <a class="page-link" th:href="@{/user/orders(pageNo=${currentPage - 1})}" aria-label="Previous">
+                                <span aria-hidden="true">«</span>
+                            </a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        <li th:each="page : ${#numbers.sequence(1, totalPages)}"
+                            th:class="${page == currentPage} ? 'page-item active' : 'page-item'">
+                            <a class="page-link" th:href="@{/user/orders(pageNo=${page})}" th:text="${page}"></a>
+                        </li>
+
+                        <!-- Next Page Link -->
+                        <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                            <a class="page-link" th:href="@{/user/orders(pageNo=${currentPage + 1})}" aria-label="Next">
+                                <span aria-hidden="true">»</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+            </div>
+
+
+            <!--Footer Starts-->
+            <footer>
+                <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+            </footer>
+            <!-- Footer Ends-->
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+            <!-- Bootstrap JS and Popper -->
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+                    integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+                    crossorigin="anonymous">
+            </script>
+        </body>
+</html>

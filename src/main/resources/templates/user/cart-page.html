@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+    <style>
+        body{
+            background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+        }
+        .cart-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .cart-table th, .cart-table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+        .cart-table img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .quantity-control button {
+            width: 35px;
+            height: 35px;
+            padding: 0;
+        }
+        .quantity-control input {
+            width: 50px;
+            text-align: center;
+        }
+        .summary-card {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-checkout {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+        }
+
+        .sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 1050; /* ensure it's above all other content */
+            }
+    </style>
+</head>
+<body>
+
+<!-- NavBar Starts-->
+<header class="sticky-header">
+    <div th:replace="~{fragments/navbar :: navBar-th}"></div>
+</header>
+<!-- NavBar Ends-->
+
+
+<div class="cart-container">
+        <h2 class="mb-4 text-center">Your Shopping Cart</h2>
+        <div class="row">
+
+            <div class="alert alert-secondary text-center mt-2 mb-2" role="alert" th:if="${msg}">
+                <span th:text="${msg}"></span>
+            </div>
+
+            <th:block th:unless="${msg}">
+                <!-- Cart Items -->
+
+                <div class="col-lg-8 mb-4">
+                    <div class="table-responsive">
+                        <table class="table cart-table">
+                            <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Products -->
+                            <tr th:each="cart : ${cartList}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <!--Image-->
+                                        <img th:src="@{${cart.product.image}}" alt="Product Image">
+                                        <div class="text-start">
+
+                                            <!--Title-->
+                                            <h6 class="mb-1"><span th:text="${cart.product.title}"></span></h6>
+
+                                            <!--Description-->
+                                            <small class="text-muted"><span th:text="${cart.product.description}"></span></small>
+
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- single product Price-->
+                                <td>₹ [[${cart.product.discountedPrice}]]</td>
+
+
+                                <td>
+                                    <div class="quantity-control">
+                                        <a class="btn btn-outline-secondary btn-sm" th:href="@{/user/decreaseQuantity(uid=${cart.user.id},pid=${cart.product.id})}">-</a>
+                                        <input type="number" class="form-control" th:value="${cart.quantity}">
+                                        <a class="btn btn-outline-secondary btn-sm" th:href="@{/user/increaseQuantity(uid=${cart.user.id},pid=${cart.product.id})}">+</a>
+                                    </div>
+                                </td>
+
+                                <!-- total price -->
+                                <td>[[${cart.totalPrice}]]</td>
+                                <td>
+                                    <a class="btn btn-danger btn-sm" th:href="@{/user/deleteCartItem(uid=${cart.user.id},pid=${cart.product.id})}">Delete</a>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <div class="summary-card">
+                        <h4 class="mb-4">Order Summary</h4>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span>₹ [[${subTotalPrice}]]</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping</span>
+                            <span>₹ 250</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax</span>
+                            <span>₹ 100</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total</span>
+                            <span>₹ [[${subTotalPrice + 350}]]</span>
+                        </div>
+                        <a th:href="@{/user/checkout(price=${subTotalPrice},userId=${loggedInUser.id})}" class="btn btn-primary btn-checkout mt-4">Proceed to Checkout</a>
+                    </div>
+                </div>
+            </th:block>
+
+        </div>
+    </div>
+
+    <!--Footer Starts-->
+    <footer>
+        <div th:replace="~{fragments/footer :: myFooter-th}"></div>
+    </footer>
+    <!-- Footer Ends-->
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script>
+    </script>
+</body>
+</html>
