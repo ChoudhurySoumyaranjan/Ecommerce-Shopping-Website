@@ -1,2 +1,2 @@
 # Ecommerce-Shopping-Website
-Developed using SpringBoot
+Developed using SpringBoot, Html, CSS, Javascript, Bootstrap, mySql, JSON
